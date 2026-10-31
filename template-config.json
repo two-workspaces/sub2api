@@ -1,0 +1,214 @@
+{
+ "services": {
+  "02357357-78b7-4c4f-9d5f-e75c9bd3dc9d": {
+   "icon": "https://raw.githubusercontent.com/two-workspaces/sub2api/main/icon.svg",
+   "name": "Sub2API",
+   "build": {},
+   "deploy": {
+    "startCommand": null,
+    "healthcheckPath": "/health",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "repo": "https://github.com/two-workspaces/sub2api",
+    "rootDirectory": null
+   },
+   "variables": {
+    "ADMIN_EMAIL": {
+     "defaultValue": "admin@${{RAILWAY_PUBLIC_DOMAIN}}",
+     "description": "Admin login email, created on first boot so the setup page is never open to strangers",
+     "isOptional": false
+    },
+    "ADMIN_PASSWORD": {
+     "defaultValue": "${{secret(24, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Admin password, set on first boot only - copy it from here to log in, then change it in Sub2API",
+     "isOptional": false
+    },
+    "SUB2API_REGISTRATION": {
+     "defaultValue": "false",
+     "description": "Public sign-up after first boot: false keeps the gateway private (create users as admin), true opens it",
+     "isOptional": false
+    },
+    "JWT_SECRET": {
+     "defaultValue": "${{secret(64)}}",
+     "description": "Signs login sessions - auto-generated",
+     "isOptional": false
+    },
+    "TOTP_ENCRYPTION_KEY": {
+     "defaultValue": "${{secret(64, \"0123456789abcdef\")}}",
+     "description": "Encrypts 2FA and payment secrets (64 hex chars) - auto-generated; never change it",
+     "isOptional": false
+    },
+    "AUTO_SETUP": {
+     "defaultValue": "true",
+     "description": "Configure from these variables instead of the setup wizard - leave as is",
+     "isOptional": false
+    },
+    "DATABASE_HOST": {
+     "defaultValue": "${{Postgres.RAILWAY_PRIVATE_DOMAIN}}",
+     "description": "Postgres host - leave as is",
+     "isOptional": false
+    },
+    "DATABASE_PORT": {
+     "defaultValue": "5432",
+     "description": "Postgres port - leave as is",
+     "isOptional": false
+    },
+    "DATABASE_USER": {
+     "defaultValue": "${{Postgres.POSTGRES_USER}}",
+     "description": "Postgres user - leave as is",
+     "isOptional": false
+    },
+    "DATABASE_PASSWORD": {
+     "defaultValue": "${{Postgres.POSTGRES_PASSWORD}}",
+     "description": "Postgres password - leave as is",
+     "isOptional": false
+    },
+    "DATABASE_DBNAME": {
+     "defaultValue": "${{Postgres.POSTGRES_DB}}",
+     "description": "Postgres database - leave as is",
+     "isOptional": false
+    },
+    "DATABASE_SSLMODE": {
+     "defaultValue": "disable",
+     "description": "Private network, no TLS needed - leave as is",
+     "isOptional": false
+    },
+    "REDIS_HOST": {
+     "defaultValue": "${{Redis.RAILWAY_PRIVATE_DOMAIN}}",
+     "description": "Redis host - leave as is",
+     "isOptional": false
+    },
+    "REDIS_PORT": {
+     "defaultValue": "6379",
+     "description": "Redis port - leave as is",
+     "isOptional": false
+    },
+    "REDIS_PASSWORD": {
+     "defaultValue": "${{Redis.REDIS_PASSWORD}}",
+     "description": "Redis password - leave as is",
+     "isOptional": false
+    },
+    "SERVER_HOST": {
+     "defaultValue": "0.0.0.0",
+     "description": "Listen address - leave as is",
+     "isOptional": false
+    },
+    "SERVER_PORT": {
+     "defaultValue": "8080",
+     "description": "Port Sub2API listens on - leave as is",
+     "isOptional": false
+    },
+    "SERVER_MODE": {
+     "defaultValue": "release",
+     "description": "Gin mode - leave as is",
+     "isOptional": false
+    },
+    "RUN_MODE": {
+     "defaultValue": "standard",
+     "description": "standard: full billing and quotas; simple: personal use without balances",
+     "isOptional": false
+    },
+    "TZ": {
+     "defaultValue": "UTC",
+     "description": "Time zone for usage stats and logs, e.g. Europe/Berlin",
+     "isOptional": false
+    },
+    "PORT": {
+     "defaultValue": "8080",
+     "description": "Railway routing port - leave as is",
+     "isOptional": false
+    }
+   },
+   "networking": {
+    "serviceDomains": {
+     "<hasDomain>": {}
+    }
+   },
+   "volumeMounts": {
+    "a4c0a90b-2c27-40d9-9dd3-8ffb9042f7c0": {
+     "mountPath": "/app/data"
+    }
+   }
+  },
+  "86ac8552-3ab1-4fb6-a122-79c660807e10": {
+   "icon": "https://devicons.railway.app/i/postgresql.svg",
+   "name": "Postgres",
+   "build": {},
+   "deploy": {
+    "startCommand": null,
+    "healthcheckPath": null,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "image": "ghcr.io/railwayapp-templates/postgres-ssl:18"
+   },
+   "variables": {
+    "POSTGRES_DB": {
+     "defaultValue": "sub2api",
+     "description": "Database name",
+     "isOptional": false
+    },
+    "POSTGRES_USER": {
+     "defaultValue": "sub2api",
+     "description": "Database user",
+     "isOptional": false
+    },
+    "POSTGRES_PASSWORD": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Auto-generated database password",
+     "isOptional": false
+    },
+    "PGDATA": {
+     "defaultValue": "/var/lib/postgresql/data/pgdata",
+     "description": "Data subdirectory - keeps Postgres happy on Railway volumes",
+     "isOptional": false
+    },
+    "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+     "defaultValue": "60",
+     "description": "Time for Postgres to shut down cleanly on redeploy",
+     "isOptional": false
+    }
+   },
+   "networking": {
+    "serviceDomains": {}
+   },
+   "volumeMounts": {
+    "f21b63c0-e096-4bfa-84de-c6fa9e9403bb": {
+     "mountPath": "/var/lib/postgresql/data"
+    }
+   }
+  },
+  "7b089e31-d499-4b51-b7bf-7a5375e56097": {
+   "icon": "https://devicons.railway.app/i/redis.svg",
+   "name": "Redis",
+   "build": {},
+   "deploy": {
+    "startCommand": "/bin/sh -c \"rm -rf /data/lost+found && exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD --maxmemory-policy noeviction --appendonly yes --dir /data\"",
+    "healthcheckPath": null,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "image": "redis:8.10.2-alpine"
+   },
+   "variables": {
+    "REDIS_PASSWORD": {
+     "defaultValue": "${{secret(32)}}",
+     "description": "Auto-generated Redis password",
+     "isOptional": false
+    }
+   },
+   "networking": {
+    "serviceDomains": {}
+   },
+   "volumeMounts": {
+    "a6bb68ce-4d7a-4e63-9abe-dd4f58b3059c": {
+     "mountPath": "/data"
+    }
+   }
+  }
+ }
+}

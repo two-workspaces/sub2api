@@ -1,0 +1,29 @@
+#!/bin/sh
+# Sub2API on Railway. AUTO_SETUP creates the admin from ADMIN_EMAIL/ADMIN_PASSWORD,
+# but upstream opens public sign-up by default. On first boot this sets it from
+# SUB2API_REGISTRATION (default false); a marker on the volume leaves later
+# changes made in the admin UI alone.
+/app/docker-entrypoint.sh "$@" &
+pid=$!
+trap 'kill -TERM $pid 2>/dev/null; wait $pid; exit 0' TERM INT
+
+mark=/app/data/.railway-registration-set
+if [ ! -f "$mark" ]; then
+  base=http://127.0.0.1:${SERVER_PORT:-8080}
+  until curl -fs "$base/health" >/dev/null; do
+    kill -0 $pid 2>/dev/null || exit 1
+    sleep 1
+  done
+  reg=$([ "$SUB2API_REGISTRATION" = true ] && echo true || echo false)
+  tok=$(curl -fs "$base/api/v1/auth/login" -H 'Content-Type: application/json' \
+    -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\"}" |
+    sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+  if [ -n "$tok" ] && curl -fs -X PUT "$base/api/v1/admin/settings" -H "Authorization: Bearer $tok" \
+      -H 'Content-Type: application/json' -d "{\"registration_enabled\":$reg}" >/dev/null; then
+    touch "$mark"
+    echo "[railway] public sign-up: $reg"
+  else
+    echo "[railway] could not set public sign-up; set it under Admin > Settings"
+  fi
+fi
+wait $pid
