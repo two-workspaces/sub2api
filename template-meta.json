@@ -6,6 +6,6 @@
   "image": "https://raw.githubusercontent.com/two-workspaces/sub2api/main/icon.svg",
   "card_desc": "Sub2API, the open-source AI API gateway: pool Claude Code, Codex and Gemini subscriptions and API keys, hand out your own keys with quotas, billing and sticky sessions. Admin created on first boot, sign-up off, pinned release on Postgres and Redis.",
   "deploy_marker": "two-workspaces/sub2api",
-  "published": false,
+  "published": true,
   "id": "eb108c97-f7c7-4013-a4ed-3976a78fa6f7"
 }
