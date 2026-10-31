@@ -11,8 +11,7 @@
     "restartPolicyMaxRetries": 10
    },
    "source": {
-    "repo": "https://github.com/two-workspaces/sub2api",
-    "rootDirectory": null
+    "image": "weishaw/sub2api:0.2.19"
    },
    "variables": {
     "ADMIN_EMAIL": {
@@ -23,11 +22,6 @@
     "ADMIN_PASSWORD": {
      "defaultValue": "${{secret(24, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
      "description": "Admin password, set on first boot only - copy it from here to log in, then change it in Sub2API",
-     "isOptional": false
-    },
-    "SUB2API_REGISTRATION": {
-     "defaultValue": "false",
-     "description": "Public sign-up after first boot: false keeps the gateway private (create users as admin), true opens it",
      "isOptional": false
     },
     "JWT_SECRET": {
